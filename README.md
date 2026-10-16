@@ -6,11 +6,13 @@
 
 *The job search that runs on your machine.*
 
+> This is a fork of [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search) by Mads Lorentzen (MIT). It adds first-class OpenAI Codex CLI support alongside Claude Code. The story, Ko-fi link, and Trendshift badge below belong to the original project. See [What this fork adds](#what-this-fork-adds).
+
 <p align="center">
   <a href="https://trendshift.io/repositories/43622?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-43622" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/43622/daily" alt="MadsLorentzen%2Fai-job-search | Trendshift" width="250" height="55"/></a>
 </p>
 
-[![CI](https://github.com/MadsLorentzen/ai-job-search/actions/workflows/ci.yml/badge.svg)](https://github.com/MadsLorentzen/ai-job-search/actions/workflows/ci.yml)
+[![CI](https://github.com/dev-bru/ai-job-search/actions/workflows/ci.yml/badge.svg)](https://github.com/dev-bru/ai-job-search/actions/workflows/ci.yml)
 
 An AI-powered job application framework built on [Claude Code](https://claude.com/claude-code). Fork it, fill in your profile, and let Claude evaluate job postings, tailor your CV, write cover letters, and prepare you for interviews.
 
@@ -37,6 +39,28 @@ Sixty-nine tailored applications, twenty first interviews, and one signed contra
   </a>
 </p>
 
+## What this fork adds
+
+- Codex entry points for the core flows use the same slash commands as Claude Code and point to the canonical workflow specs.
+- Runtime-neutral guidance covers Claude-only steps; PowerShell and macOS shell forms are documented and guarded by a test.
+- Repo-root-relative skill paths share one job state, and recorded profile rules take precedence over one-off requests.
+- `SETUP.md` includes the MiKTeX sandbox recipe; `/add-portal` stages new portal skills under `build/portal-staging/` for installation outside the sandbox.
+- Tested on Windows: every command ran under both Codex CLI and Claude Code with matching results.
+
+### Quick start with Codex
+
+1. Install and sign in to the OpenAI Codex CLI. Clone this fork with `git clone https://github.com/dev-bru/ai-job-search.git` and enter the `ai-job-search` folder.
+2. Install the portal CLIs as in [Quick start step 2](#2-install-job-search-tools).
+3. Start Codex in the repo folder with network access (needed by `/scrape` and `/apply`):
+
+   ```bash
+   codex --sandbox workspace-write -c sandbox_workspace_write.network_access=true
+   ```
+
+   The same commands work: `/setup`, `/scrape`, `/rank`, `/apply <url>`, `/upskill`, `/interview`, `/outcome`, `/expand`, `/html-report`, `/reset`, `/add-template`, and `/add-portal`.
+
+`/gmail-sync` and `/notion-sync` require Claude's connectors and stop under Codex. Under Codex, `/add-portal` stages the new portal in `build/portal-staging/` and gives a one-line install command. For LaTeX, see [Compiling inside the Codex sandbox](SETUP.md#compiling-inside-the-codex-sandbox). macOS has not yet been tested.
+
 ## What this is
 
 A structured workflow that turns Claude Code into a full-stack job application assistant. The core workflow (self-profiling, fit evaluation, and the drafter-reviewer application pipeline) is **language- and country-agnostic**. The job portal search skills are built for the Danish market (Jobindex, Jobnet, Akademikernes Jobbank, etc.), but the pattern is designed to be swapped for your local job boards.
@@ -61,7 +85,7 @@ The framework encodes career guidance best practices, including structured evalu
 
 ## Prerequisites
 
-- [Claude Code](https://claude.com/claude-code) (CLI). Claude Code has no free tier: you need a Claude Pro/Max/Team subscription or Anthropic API credits (pay-per-token, usually cheaper for occasional use). Using a different agent tool (Codex, Antigravity, Gemini CLI)? Start at [`AGENTS.md`](AGENTS.md) - the portal search skills work there out of the box, and [community forks](https://github.com/MadsLorentzen/ai-job-search/discussions/78) adapt the full workflow.
+- [Claude Code](https://claude.com/claude-code) (CLI). Claude Code has no free tier: you need a Claude Pro/Max/Team subscription or Anthropic API credits (pay-per-token, usually cheaper for occasional use). For OpenAI Codex CLI, see [Quick start with Codex](#quick-start-with-codex). Using another agent tool (Antigravity, Gemini CLI)? Start at [`AGENTS.md`](AGENTS.md) - the portal search skills work there out of the box, and [community forks](https://github.com/MadsLorentzen/ai-job-search/discussions/78) adapt the full workflow.
 - Python 3.10+
 - [Bun](https://bun.sh) (for job search CLI tools)
 - LaTeX distribution with `lualatex` and `xelatex`: [TeX Live](https://tug.org/texlive/), [MacTeX](https://tug.org/mactex/), [TinyTeX](https://yihui.org/tinytex/), or [MiKTeX](https://miktex.org/). The CV compiles with `lualatex` (pdflatex often fails on modern MiKTeX installs with `fontawesome5` font-expansion errors); the cover letter compiles with `xelatex` because `cover.cls` requires `fontspec`. If using a minimal TeX install such as TinyTeX or BasicTeX, install the extra packages listed in [SETUP.md](SETUP.md#minimal-tex-install-tinytexbasictex).
@@ -74,7 +98,7 @@ The framework encodes career guidance best practices, including structured evalu
 ### 1. Fork and clone
 
 ```bash
-gh repo fork MadsLorentzen/ai-job-search --clone
+gh repo fork dev-bru/ai-job-search --clone
 cd ai-job-search
 ```
 
@@ -370,9 +394,10 @@ Thinking about a PR? Read [CONTRIBUTING.md](CONTRIBUTING.md) first - it explains
 
 ## Acknowledgements
 
+- [Mads Lorentzen](https://github.com/MadsLorentzen) for the [original project](https://github.com/MadsLorentzen/ai-job-search)
 - [Mikkel Krogholm](https://github.com/mikkelkrogsholm) ([skills repo](https://github.com/mikkelkrogsholm/skills)) for the job search CLI skills
 - Built with [Claude Code](https://claude.com/claude-code) by [Anthropic](https://anthropic.com)
 
 ## License
 
-MIT
+MIT. Original copyright Mads Lorentzen; fork changes Dev Aaryan. See [LICENSE](LICENSE).

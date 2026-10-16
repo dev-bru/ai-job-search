@@ -368,7 +368,18 @@ After the final clean compile (and after 5b-5d have passed), delete the intermed
   ```bash
   rm -f cv/main_<company>_<role>.{aux,log,out,fls,fdb_latexmk,synctex.gz} cover_letters/cover_<company>_<role>.{aux,log,out,fls,fdb_latexmk,synctex.gz}
   ```
-- **Custom template whose compile command redirects to `build/`:** also `rm -rf cv/build cover_letters/build` (`/add-template` Step 4 already says `/apply` must delete it).
+  PowerShell:
+  ```powershell
+  Remove-Item 'cv/main_<company>_<role>.aux', 'cv/main_<company>_<role>.log', 'cv/main_<company>_<role>.out', 'cv/main_<company>_<role>.fls', 'cv/main_<company>_<role>.fdb_latexmk', 'cv/main_<company>_<role>.synctex.gz', 'cover_letters/cover_<company>_<role>.aux', 'cover_letters/cover_<company>_<role>.log', 'cover_letters/cover_<company>_<role>.out', 'cover_letters/cover_<company>_<role>.fls', 'cover_letters/cover_<company>_<role>.fdb_latexmk', 'cover_letters/cover_<company>_<role>.synctex.gz' -ErrorAction SilentlyContinue
+  ```
+- **Custom template whose compile command redirects to `build/`:** also delete the `build/` folders (`/add-template` Step 4 already says `/apply` must delete them):
+  ```bash
+  rm -rf cv/build cover_letters/build
+  ```
+  PowerShell:
+  ```powershell
+  Remove-Item -Recurse -Force cv/build, cover_letters/build -ErrorAction SilentlyContinue
+  ```
 - **Zero-artifact toolchain (e.g. `typst compile`):** nothing to delete.
 
 ---

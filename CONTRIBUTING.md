@@ -1,3 +1,5 @@
+> This fork adds OpenAI Codex CLI support, which upstream deliberately does not accept (see "Alternative-harness ports" below). This fork accepts Codex/Claude parity fixes; methodology and portal fixes that are not runtime-specific are better sent upstream.
+
 # Contributing
 
 Thanks for considering a contribution! This repo has a deliberate, narrow philosophy, and most declined PRs are well-executed work that simply didn't know about it. Read this first; it will save you effort and tell you where your work will land best.

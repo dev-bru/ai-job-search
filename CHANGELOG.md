@@ -15,6 +15,8 @@ per-file diff commands.
 
 ### Added
 
+- **Public fork attribution and Codex onboarding** (`README.md`, `CONTRIBUTING.md`, `LICENSE`) - credit the original project, describe the fork's Codex support, and document PowerShell cleanup for `/apply` Step 5e.
+
 - **Portal skill staging when `.agents/skills/` is not writable** (`.claude/commands/add-portal.md`, `tests/test_add_portal_staging.py`) - build and verify portal skills under `build/portal-staging/`, then provide a user-run install command before registration.
 
 - **LaTeX compilation inside the Codex sandbox** (`SETUP.md`, `/apply`, `/add-template`) - document a working workspace-local MiKTeX setup, including the first-run config marker and optional OpenType font copies, and link to the sandbox setup note from both compile workflows.
@@ -22,6 +24,7 @@ per-file diff commands.
 - **Root-relative skill paths and profile-rule precedence** (`AGENTS.md`, the scraper,
   application-assistant, and upskill skills) - all skill paths resolve from the repository
   root, and candidate-recorded rules take precedence over conflicting one-off requests.
+  The precedence change bumped `AGENTS.md` to `framework_version` 1.0.2.
 - **Codex entry points for six core flows** (`.agents/skills/job-*/SKILL.md`,
   `AGENTS.md`, `tests/test_codex_entry_points.py`) - thin Agent Skills link to
   the canonical `.claude/` specs without duplicating steps; `AGENTS.md` bumps
