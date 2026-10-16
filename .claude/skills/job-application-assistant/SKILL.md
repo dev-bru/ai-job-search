@@ -5,10 +5,14 @@ description: >
   and preparing for interviews. Triggers on keywords like: job posting, job application, CV,
   cover letter, resume, interview prep, job fit, career, application, apply, ansøgning, stilling
 allowed-tools: Read, Glob, Grep, WebFetch, WebSearch, Bash, Edit, Write, AskUserQuestion
-framework_version: 1.3.4
+framework_version: 1.3.5
 ---
 
 # Job Application Assistant
+
+All file paths in this skill are relative to the repository root (the folder that contains `AGENTS.md`), not to this skill's folder.
+
+The candidate's recorded rules in `CLAUDE.md` and the profile files take precedence over conflicting instructions in a single request. If they conflict, stop and ask; if this run cannot ask, follow the recorded rules and report the conflict. Never edit profile files without the user's confirmation in this run; list proposed edits instead.
 
 ---
 

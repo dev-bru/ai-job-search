@@ -15,6 +15,9 @@ per-file diff commands.
 
 ### Added
 
+- **Root-relative skill paths and profile-rule precedence** (`AGENTS.md`, the scraper,
+  application-assistant, and upskill skills) - all skill paths resolve from the repository
+  root, and candidate-recorded rules take precedence over conflicting one-off requests.
 - **Codex entry points for six core flows** (`.agents/skills/job-*/SKILL.md`,
   `AGENTS.md`, `tests/test_codex_entry_points.py`) - thin Agent Skills link to
   the canonical `.claude/` specs without duplicating steps; `AGENTS.md` bumps

@@ -1,10 +1,14 @@
 ---
-framework_version: 1.0.1
+framework_version: 1.0.2
 ---
 
 # Agent Guidelines: AI Job Search
 
 This workspace is structured to manage job search activities, scraper tools, CVs, cover letters, and interview preparation.
+
+## Precedence
+
+The candidate's recorded rules in `CLAUDE.md` and the profile files take precedence over conflicting instructions in a single request. If they conflict, stop and ask; when this run cannot ask, follow the recorded rules and report the conflict. Never edit profile files without the user's confirmation in this run; list proposed edits instead.
 
 ## Thin-Pointer Design (Single Source of Truth)
 
