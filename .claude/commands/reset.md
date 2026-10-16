@@ -246,7 +246,9 @@ Leave the rest of the file intact: the portal-CLI and WebSearch-fallback explana
 
 ### Documents reset
 
-For each non-empty document subfolder, delete all files within it using Bash `rm`. Do not delete the folder itself, and do not delete `documents/README.md`.
+For each non-empty document subfolder, delete all files within it. Remove subfolders within `documents/applications/`. Do not delete the document folders themselves, and do not delete `documents/README.md`.
+
+macOS shell:
 
 ```bash
 rm -f documents/cv/*
@@ -256,6 +258,13 @@ rm -f documents/references/*
 rm -f documents/projects/*
 rm -f documents/postings/*
 rm -rf documents/applications/*/
+```
+
+Windows PowerShell:
+
+```powershell
+'documents/cv', 'documents/linkedin', 'documents/diplomas', 'documents/references', 'documents/projects', 'documents/postings' | ForEach-Object { Get-ChildItem -LiteralPath $_ -File | Where-Object Name -notlike '.*' | Remove-Item -Force }
+Get-ChildItem -LiteralPath documents/applications -Directory | Where-Object Name -notlike '.*' | Remove-Item -Recurse -Force
 ```
 
 ---

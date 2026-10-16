@@ -16,8 +16,17 @@ All CVs use the moderncv LaTeX package with the "banking" style and "blue" color
 
 ### Compile command
 
+macOS shell:
+
 ```bash
 cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex
+```
+
+Windows PowerShell:
+
+```powershell
+Set-Location cv -ErrorAction Stop
+lualatex -interaction=nonstopmode main_<company>_<role>.tex
 ```
 
 Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. Any page count other than 2 is a failure that must be fixed before presenting to the user.

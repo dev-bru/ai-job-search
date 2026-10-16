@@ -141,6 +141,46 @@ Copy-Item cover_letters\cover.cls, cover_letters\OpenFonts -Destination $SmokeDi
 Push-Location $SmokeDir; xelatex -interaction=nonstopmode -halt-on-error cover_smoke.tex; Pop-Location
 ```
 
+### Compiling inside the Codex sandbox
+
+Use this recipe only for runs inside a sandbox that blocks writes outside the repository; never use it in a normal shell.
+
+MiKTeX normally writes per-user files outside the repository and may also write to the Windows registry. A sandbox can block both, causing `lualatex` or `xelatex` to fail with "Access is denied". An empty config folder also looks like an unfinished MiKTeX install, so the sandbox may try to run first-time setup and write to the registry.
+
+`MIKTEX_USERINSTALL` points at the existing install only so MiKTeX can find its packages. The workspace-local config below sets `AutoInstall=0`, so a missing package cannot trigger an install outside the repository.
+
+From any folder in the repository, set up workspace-local MiKTeX paths before compiling:
+
+```powershell
+$repo = (git rev-parse --show-toplevel).Trim()
+$install = (Get-Item (Join-Path (Split-Path (Get-Command lualatex).Source) '../../..')).FullName.Replace('\','/')
+if (-not (Test-Path (Join-Path $install 'miktex/bin') -PathType Container)) {
+  throw "MiKTeX install path '$install' has no miktex/bin directory; stop and check lualatex."
+}
+$env:MIKTEX_USERINSTALL = $install
+$env:MIKTEX_USERCONFIG = "$repo/build/miktex"
+$env:MIKTEX_USERDATA = $env:MIKTEX_USERCONFIG
+New-Item -ItemType Directory -Force "$repo/build/miktex/miktex/config" | Out-Null
+Set-Content "$repo/build/miktex/miktex/config/miktex.ini" "[Core]`nLastUserMaintenance=1`n[MPM]`nAutoInstall=0" -Encoding ASCII
+```
+
+For a template that loads an installed OpenType font by name (for example, Latin Modern through `fontspec`), copy the font files into the workspace too. This example copies the Latin Modern Roman and Sans fonts:
+
+```powershell
+New-Item -ItemType Directory -Force "$repo/build/miktex/fonts/opentype" | Out-Null
+Copy-Item "$install/fonts/opentype/public/lm/lmroman10-*.otf" "$repo/build/miktex/fonts/opentype/"
+Copy-Item "$install/fonts/opentype/public/lm/lmsans10-*.otf" "$repo/build/miktex/fonts/opentype/"
+```
+
+MiKTeX may still print update or maintenance warnings; they are harmless. Claude Code needs nothing.
+
+**macOS / TeX Live (UNVERIFIED):** from any folder in the repository, use a workspace-local variable directory:
+
+```bash
+export TEXMFVAR="$(git rev-parse --show-toplevel)/build/texmf-var"
+mkdir -p "$TEXMFVAR"
+```
+
 ### Optional: ATS text extraction (pypdf, then pdftotext)
 
 `/apply` runs an ATS parseability check on the compiled CV: it extracts the PDF's text layer and verifies contact details, reading order, and keyword coverage the way an applicant-tracking system sees them.

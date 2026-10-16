@@ -44,6 +44,8 @@ Read the evaluation framework:
 
 Using the framework from `04-job-evaluation.md`, evaluate the job posting against the candidate's profile. If the salary lookup tool is configured, run:
 
+Commands use `python`. If `python` is not on your PATH, use `python3` (macOS) or `py` (Windows), as described in `SETUP.md`.
+
 ```bash
 python salary_lookup.py "<Company Name>" --json
 ```
@@ -129,6 +131,8 @@ Write both files to disk. Keep the exact text of both drafts in working memory �
 ## Step 3: REVIEWER - Research & Critique
 
 Use the **Agent tool** to spawn a `general-purpose` reviewer agent. The reviewer gets a fresh context, so pass the drafts **inline in the prompt** below (do not make the reviewer Read them). Scope the reviewer's file reads to content-critique essentials only — the reviewer does not need the template structure files (`05`, `06`) to critique content, since those govern structural/toolchain concerns the drafter already applied.
+
+**Other runtimes without the Agent tool:** After drafting, review inline as a separate pass, one item at a time; re-read the inputs fresh and do not reuse the drafting reasoning.
 
 Replace `<COMPANY>`, `<ROLE>`, `<INSERT_JOB_POSTING_TEXT_HERE>`, `<INSERT_CV_DRAFT_HERE>`, and `<INSERT_COVER_LETTER_DRAFT_HERE>` with actual values before dispatching.
 
@@ -238,14 +242,38 @@ After all edits are applied, the two files on disk are the final drafts.
 
 Use `<CV_COMPILE>` and `<COVER_COMPILE>` resolved in Step 2 (the active template's declared compile command, or the stock defaults below if no custom template is active):
 
+macOS shell:
+
 ```bash
-cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex
-cd ../cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+(cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex)
+(cd cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex)
 ```
+
+Windows PowerShell:
+
+```powershell
+Push-Location cv -ErrorAction Stop
+try {
+  lualatex -interaction=nonstopmode main_<company>_<role>.tex
+  if ($LASTEXITCODE -ne 0) { throw 'CV compile failed' }
+} finally {
+  Pop-Location
+}
+Push-Location cover_letters -ErrorAction Stop
+try {
+  xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+  if ($LASTEXITCODE -ne 0) { throw 'Cover letter compile failed' }
+} finally {
+  Pop-Location
+}
+```
+
+For sandboxed runtimes, see [Compiling inside the Codex sandbox](../../SETUP.md#compiling-inside-the-codex-sandbox).
 
 - **Stock CV** uses **lualatex** — pdflatex fails on modern MiKTeX with fontawesome5 font-expansion errors. lualatex handles the same sources cleanly.
 - **Stock cover letter** uses **xelatex** — cover.cls requires fontspec.
 - **Custom template active:** run its declared `<CV_COMPILE>`/`<COVER_COMPILE>` command instead, substituting the actual filename for `<file>`. Never fall back to lualatex/xelatex when a custom template's compile command is a different toolchain (e.g. `typst compile`) — that command is what the manifest actually verified in `/add-template` Step 4.
+  Run each custom compile inside a scoped directory change that ends back at the repository root before Step 5e: on macOS a subshell that changes into `cv/` or `cover_letters/`, in PowerShell `Push-Location <folder> -ErrorAction Stop; try { <COMPILE> } finally { Pop-Location }`.
 
 If either compile fails, fix the error and re-compile until clean.
 
@@ -312,7 +340,7 @@ python tools/verify_pdf.py cv/main_<company>_<role>.pdf --ascii-dates --dump-tex
 The command prints `extractor: pypdf` or `extractor: pdftotext`. Record that name in the Step 6 report. Read the `.txt` file. If that tool is unavailable, the Poppler fallback is:
 
 ```bash
-cd cv && pdftotext -layout -enc UTF-8 main_<company>_<role>.pdf main_<company>_<role>.txt
+pdftotext -layout -enc UTF-8 cv/main_<company>_<role>.pdf cv/main_<company>_<role>.txt
 ```
 
 **2. Parseability checks** on the extracted text:
@@ -345,11 +373,24 @@ Failures here are template-level problems: fix them in the `<CV_EXT>` source (e.
 
 After the final clean compile (and after 5b-5d have passed), delete the intermediate files the compile command left behind. Keep the source (`<CV_EXT>`/`<COVER_EXT>`), the `.pdf`, and every template asset (`cover.cls`, `OpenFonts/`, a custom template's files).
 
+Run the following cleanup commands from the repository root.
+
 - **Stock or custom LaTeX toolchain:**
   ```bash
   rm -f cv/main_<company>_<role>.{aux,log,out,fls,fdb_latexmk,synctex.gz} cover_letters/cover_<company>_<role>.{aux,log,out,fls,fdb_latexmk,synctex.gz}
   ```
-- **Custom template whose compile command redirects to `build/`:** also `rm -rf cv/build cover_letters/build` (`/add-template` Step 4 already says `/apply` must delete it).
+  PowerShell:
+  ```powershell
+  Remove-Item 'cv/main_<company>_<role>.aux', 'cv/main_<company>_<role>.log', 'cv/main_<company>_<role>.out', 'cv/main_<company>_<role>.fls', 'cv/main_<company>_<role>.fdb_latexmk', 'cv/main_<company>_<role>.synctex.gz', 'cover_letters/cover_<company>_<role>.aux', 'cover_letters/cover_<company>_<role>.log', 'cover_letters/cover_<company>_<role>.out', 'cover_letters/cover_<company>_<role>.fls', 'cover_letters/cover_<company>_<role>.fdb_latexmk', 'cover_letters/cover_<company>_<role>.synctex.gz' -ErrorAction SilentlyContinue
+  ```
+- **Custom template whose compile command redirects to `build/`:** also delete the `build/` folders (`/add-template` Step 4 already says `/apply` must delete them):
+  ```bash
+  rm -rf cv/build cover_letters/build
+  ```
+  PowerShell:
+  ```powershell
+  Remove-Item -Recurse -Force cv/build, cover_letters/build -ErrorAction SilentlyContinue
+  ```
 - **Zero-artifact toolchain (e.g. `typst compile`):** nothing to delete.
 
 ---

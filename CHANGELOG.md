@@ -15,6 +15,28 @@ per-file diff commands.
 
 ### Added
 
+- **PR review fixes** - add Codex skill entry points for all twelve commands and tighten
+  MiKTeX sandbox setup (disable package auto-install), portal installation (scoped commands
+  and staged-file review), compile cleanup (including custom templates and stale PDFs),
+  and rule precedence. Add regression guards and Codex security notes.
+
+- **Public fork attribution and Codex onboarding** (`README.md`, `CONTRIBUTING.md`, `LICENSE`) - credit the original project, describe the fork's Codex support, and document PowerShell cleanup for `/apply` Step 5e.
+
+- **Portal skill staging when `.agents/skills/` is not writable** (`.claude/commands/add-portal.md`, `tests/test_add_portal_staging.py`) - build and verify portal skills under `build/portal-staging/`, then provide a user-run install command before registration.
+
+- **LaTeX compilation inside the Codex sandbox** (`SETUP.md`, `/apply`, `/add-template`) - document a working workspace-local MiKTeX setup, including the first-run config marker and optional OpenType font copies, and link to the sandbox setup note from both compile workflows.
+
+- **Root-relative skill paths and profile-rule precedence** (`AGENTS.md`, the scraper,
+  application-assistant, and upskill skills) - all skill paths resolve from the repository
+  root, and candidate-recorded rules take precedence over conflicting one-off requests.
+  The precedence change bumped `AGENTS.md` to `framework_version` 1.0.2.
+- **Codex entry points for six core flows** (`.agents/skills/job-*/SKILL.md`,
+  `AGENTS.md`, `tests/test_codex_entry_points.py`) - thin Agent Skills link to
+  the canonical `.claude/` specs without duplicating steps; `AGENTS.md` bumps
+  `framework_version` to 1.0.1.
+- **Runtime notes for Claude-only workflow steps** (`.claude/commands/apply.md`,
+  `rank.md`, `gmail-sync.md`, `notion-sync.md`) - inline fallbacks for Agent-tool
+  steps and clear Claude-only markers for connector commands.
 - **One cross-platform command installs every portal CLI: `python3 tools/install_portal_clis.py`**
   (#540, `README.md` quick start step 2, `SETUP.md` section 3,
   `tests/test_install_portal_clis.py`) - the README and SETUP.md each carried a PowerShell and a
@@ -46,6 +68,11 @@ per-file diff commands.
 
 ### Fixed
 
+- **Workflow shell steps run on Windows PowerShell and macOS** (`/add-template`,
+  web research, `/apply`, `/rank`, `/add-portal`, `/reset`, and the CV and cover-letter
+  guides) - platform-specific commands cover template compilation, portal setup,
+  document cleanup, and scratchpad fetches; Python invocations follow `SETUP.md`.
+  A regression test guards shell-only syntax in the canonical workflow specs.
 - **`jobnet-search` routes external ads to employer `jobAdUrl` rather than broken `find-job` links**
   (#538, `.agents/skills/jobnet-search/cli/src/commands/search.ts`, `.agents/skills/jobnet-search/cli/README.md`,
   `.agents/skills/jobnet-search/cli/tests/search-normalization.test.ts`) - external job postings on

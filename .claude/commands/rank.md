@@ -6,6 +6,8 @@ You are batch-scoring the jobs that `/scrape` has collected, so the user can dec
 
 Follow these steps **in order**.
 
+Commands use `python3`. If `python3` is not on your PATH, use `python` or `py` (Windows), as described in `SETUP.md`.
+
 ---
 
 ## Step 0: Parse Input
@@ -58,6 +60,8 @@ Dispatch parallel `general-purpose` agents via the **Agent tool**, ~5 jobs per a
 - Agents fetch each posting URL following the escalation order in `.claude/skills/job-application-assistant/09-web-research.md` (using the installed portal CLI's `detail` command when the URL belongs to a portal in `.agents/skills/`, or `WebFetch` otherwise) and score **only from actually fetched content**. If a URL is dead, redirects to a listing page, or the posting has expired, the agent marks that job `expired` - it never scores from the title alone and never fabricates posting content.
 - **Before marking anything `expired`, the agent must exhaust the escalation order** in `09-web-research.md`: installed portal CLI first, then `WebFetch`, then curl with browser headers (if `robots.txt` permits), then search for the employer's own careers site. A `WebFetch` 403 is a rejected *client*, not a missing page, and retrying with browser headers via curl recovers most corporate and bank domains. A stored URL ending in a `#fragment` points at a listing page rather than a posting, so the agent should search the employer's own careers site for the role by name before writing the job off. Include this instruction in every scoring agent's prompt. `expired` means "retrieval genuinely failed after retrying", not "the first fetch was unhelpful".
 - Scope is triage: posting text vs. rubric. **No company research, no salary lookup, no web searches** - that depth belongs to `/apply`.
+
+**Other runtimes without the Agent tool:** Fetch and score jobs inline, one item at a time, under the same rules above.
 
 Each agent returns a JSON array, one object per job:
 

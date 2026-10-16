@@ -1,5 +1,5 @@
 ---
-framework_version: 1.1.2
+framework_version: 1.1.4
 ---
 
 # Web Research and Fetching
@@ -32,10 +32,20 @@ Do **not** respond to a 403 by softening the cover letter to vague generalities,
 - **A WAF default on a site whose published policy allows access.** Many bank and corporate domains serve `User-agent: *` / `Allow: /` while their firewall filters any client that does not look like a browser. Retrying there overrides a firewall default, not an expressed preference. Proceed.
 - **A site that has actually declined.** If `robots.txt` disallows the path for `*` or for `Claude-User`, retrying with browser headers circumvents the exact mechanism the site was told to use. **Do not retry.** Skip to escalation step 4 and find the employer's own posting instead.
 
-Check it first. It is one cheap fetch, and the repo ships the check:
+Check it first. It is one cheap fetch, and the repo ships the check. Use `python3` on macOS and `py` on Windows (`python` if that is how your Python installation is exposed), as in `SETUP.md`.
+
+**Quoting `<URL>`:** every command below puts the URL inside single quotes. Before substituting it, replace each apostrophe (`'`) in the URL with `%27`; a URL never needs a literal apostrophe, and one would end the quoted string and let the rest of the URL run as a command.
+
+macOS shell:
 
 ```bash
 python3 tools/robots_check.py '<URL>'
+```
+
+Windows PowerShell:
+
+```powershell
+py tools/robots_check.py '<URL>'
 ```
 
 Exit status `0` means the retry may proceed; `1` means it must not, so go to escalation step 4. The rules it applies are deliberately on the cautious side: longest-match wins, a tie between `Allow` and `Disallow` goes to `Disallow`, and a disallow for **either** `*` or `Claude-User` blocks the retry. A `404` means the site publishes no policy, which is permission; **any other failure to read `robots.txt` leaves permission unconfirmed and the retry does not happen.**
@@ -47,15 +57,18 @@ Two details worth knowing, both covered by `tests/test_robots_check.py`:
 
 ### The retry: curl with browser headers
 
+Replace `<scratchpad path>` with the session scratchpad directory from your system prompt. On Windows PowerShell, use `curl.exe` to call curl rather than the PowerShell alias.
+
+macOS shell:
+
 ```bash
-cd "${SCRATCHPAD:?set this to the session scratchpad directory from your system prompt}" && curl -sSL --max-time 45 -o page.html -w "HTTP %{http_code} size=%{size_download}\n" \
- -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36' \
- -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' \
- -H 'Accept-Language: en-GB,en;q=0.9' \
- -H 'Accept-Encoding: gzip, deflate, br' --compressed \
- -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' \
- -H 'Upgrade-Insecure-Requests: 1' \
- '<URL>'
+curl -sSL --max-time 45 -o '<scratchpad path>/page.html' -w 'HTTP %{http_code} size=%{size_download}\n' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-GB,en;q=0.9' -H 'Accept-Encoding: gzip, deflate, br' --compressed -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Upgrade-Insecure-Requests: 1' '<URL>'
+```
+
+Windows PowerShell:
+
+```powershell
+curl.exe -sSL --max-time 45 -o '<scratchpad path>/page.html' -w 'HTTP %{http_code} size=%{size_download}\n' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8' -H 'Accept-Language: en-GB,en;q=0.9' -H 'Accept-Encoding: gzip, deflate, br' --compressed -H 'Sec-Fetch-Dest: document' -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-Site: none' -H 'Upgrade-Insecure-Requests: 1' '<URL>'
 ```
 
 Write to the session scratchpad directory, never into the repo. `--compressed` is required alongside the `Accept-Encoding` header or the output is unreadable binary.
@@ -64,15 +77,16 @@ Write to the session scratchpad directory, never into the repo. `--compressed` i
 
 `WebFetch` converts to markdown for you; curl does not. Strip the tags:
 
+macOS shell:
+
 ```bash
-cd "${SCRATCHPAD:?set this to the session scratchpad directory from your system prompt}" && python3 -c "
-import re, html
-h = open('page.html', encoding='utf-8', errors='replace').read()
-h = re.sub(r'(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>', ' ', h)
-t = html.unescape(re.sub(r'(?s)<[^>]+>', ' ', h))
-t = re.sub(r'[ \t\xa0]+', ' ', t)
-print(re.sub(r'\n\s*\n+', '\n', t).strip()[:6000])
-"
+python3 -c "import re, html, sys; h = open(sys.argv[1], encoding='utf-8', errors='replace').read(); h = re.sub(r'(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>', ' ', h); t = html.unescape(re.sub(r'(?s)<[^>]+>', ' ', h)); t = re.sub(r'[ \t\xa0]+', ' ', t); print(re.sub(r'\n\s*\n+', '\n', t).strip()[:6000])" '<scratchpad path>/page.html'
+```
+
+Windows PowerShell:
+
+```powershell
+py -c "import re, html, sys; h = open(sys.argv[1], encoding='utf-8', errors='replace').read(); h = re.sub(r'(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>', ' ', h); t = html.unescape(re.sub(r'(?s)<[^>]+>', ' ', h)); t = re.sub(r'[ \t\xa0]+', ' ', t); print(re.sub(r'\n\s*\n+', '\n', t).strip()[:6000])" '<scratchpad path>/page.html'
 ```
 
 Modern sites embed real copy inside JSON blobs in the markup, so useful text often survives with escaped `\n` and stray attribute fragments around it. That is normal. Read through the noise rather than assuming the extraction failed. To find specific facts in a large page, grep the extracted text for keywords (office cities, "since", regulator names) with surrounding context instead of printing the whole document.

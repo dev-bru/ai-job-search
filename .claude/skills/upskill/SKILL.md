@@ -9,6 +9,8 @@ allowed-tools: Read, Write, Glob, Grep, WebFetch, WebSearch
 
 # Upskill
 
+All file paths in this skill are relative to the repository root (the folder that contains `AGENTS.md`), not to this skill's folder.
+
 ---
 
 ## Overview
