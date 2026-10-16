@@ -50,5 +50,38 @@ class CodexEntryPointTests(unittest.TestCase):
                 self.assertIn(f".agents/skills/job-{flow}/SKILL.md", agents)
 
 
+class RuntimeNeutralCommandTests(unittest.TestCase):
+    def test_every_agent_tool_step_has_inline_fallback(self):
+        for flow in ("apply", "rank"):
+            command = (REPO / ".claude" / "commands" / f"{flow}.md").read_text(encoding="utf-8")
+            steps = re.split(r"(?=^## Step \d+:)", command, flags=re.MULTILINE)
+            agent_steps = [step for step in steps if "**Agent tool**" in step]
+            self.assertTrue(agent_steps, f"{flow} has no Agent-tool step")
+            for step in agent_steps:
+                with self.subTest(flow=flow, step=step.splitlines()[0]):
+                    after_tool = step.split("**Agent tool**", 1)[1]
+                    note = re.search(
+                        r"(?m)^\*\*Other runtimes without the Agent tool:\*\* (.+)$",
+                        after_tool,
+                    )
+                    self.assertIsNotNone(note, "Agent-tool step needs its own fallback note")
+                    fallback = note.group(1)
+                    self.assertIn("inline", fallback)
+                    self.assertIn("one item at a time", fallback)
+                    if flow == "apply":
+                        self.assertIn("separate pass", fallback)
+                        self.assertIn("re-read the inputs fresh", fallback)
+                        self.assertIn("do not reuse the drafting reasoning", fallback)
+
+    def test_connector_sync_commands_are_claude_only(self):
+        for flow, connector in (("gmail-sync", "Gmail"), ("notion-sync", "Notion")):
+            with self.subTest(flow=flow):
+                command = (REPO / ".claude" / "commands" / f"{flow}.md").read_text(encoding="utf-8")
+                opening = "\n".join(command.splitlines()[:5])
+                self.assertIn("**Claude Code only:**", opening)
+                self.assertIn(f"Claude's {connector} connector", opening)
+                self.assertIn("other runtimes must stop and say", opening)
+
+
 if __name__ == "__main__":
     unittest.main()

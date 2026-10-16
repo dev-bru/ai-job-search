@@ -130,6 +130,8 @@ Write both files to disk. Keep the exact text of both drafts in working memory â
 
 Use the **Agent tool** to spawn a `general-purpose` reviewer agent. The reviewer gets a fresh context, so pass the drafts **inline in the prompt** below (do not make the reviewer Read them). Scope the reviewer's file reads to content-critique essentials only â€” the reviewer does not need the template structure files (`05`, `06`) to critique content, since those govern structural/toolchain concerns the drafter already applied.
 
+**Other runtimes without the Agent tool:** After drafting, review inline as a separate pass, one item at a time; re-read the inputs fresh and do not reuse the drafting reasoning.
+
 Replace `<COMPANY>`, `<ROLE>`, `<INSERT_JOB_POSTING_TEXT_HERE>`, `<INSERT_CV_DRAFT_HERE>`, and `<INSERT_COVER_LETTER_DRAFT_HERE>` with actual values before dispatching.
 
 ```

@@ -19,6 +19,9 @@ per-file diff commands.
   `AGENTS.md`, `tests/test_codex_entry_points.py`) - thin Agent Skills link to
   the canonical `.claude/` specs without duplicating steps; `AGENTS.md` bumps
   `framework_version` to 1.0.1.
+- **Runtime notes for Claude-only workflow steps** (`.claude/commands/apply.md`,
+  `rank.md`, `gmail-sync.md`, `notion-sync.md`) - inline fallbacks for Agent-tool
+  steps and clear Claude-only markers for connector commands.
 - **One cross-platform command installs every portal CLI: `python3 tools/install_portal_clis.py`**
   (#540, `README.md` quick start step 2, `SETUP.md` section 3,
   `tests/test_install_portal_clis.py`) - the README and SETUP.md each carried a PowerShell and a
