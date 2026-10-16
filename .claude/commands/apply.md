@@ -245,19 +245,27 @@ Use `<CV_COMPILE>` and `<COVER_COMPILE>` resolved in Step 2 (the active template
 macOS shell:
 
 ```bash
-cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex
-cd ../cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+(cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex)
+(cd cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex)
 ```
 
 Windows PowerShell:
 
 ```powershell
-Set-Location cv -ErrorAction Stop
-lualatex -interaction=nonstopmode main_<company>_<role>.tex
-if ($LASTEXITCODE -ne 0) { throw 'CV compile failed' }
-Set-Location ../cover_letters -ErrorAction Stop
-xelatex -interaction=nonstopmode cover_<company>_<role>.tex
-if ($LASTEXITCODE -ne 0) { throw 'Cover letter compile failed' }
+Push-Location cv -ErrorAction Stop
+try {
+  lualatex -interaction=nonstopmode main_<company>_<role>.tex
+  if ($LASTEXITCODE -ne 0) { throw 'CV compile failed' }
+} finally {
+  Pop-Location
+}
+Push-Location cover_letters -ErrorAction Stop
+try {
+  xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+  if ($LASTEXITCODE -ne 0) { throw 'Cover letter compile failed' }
+} finally {
+  Pop-Location
+}
 ```
 
 For sandboxed runtimes, see [Compiling inside the Codex sandbox](../../SETUP.md#compiling-inside-the-codex-sandbox).
@@ -265,6 +273,7 @@ For sandboxed runtimes, see [Compiling inside the Codex sandbox](../../SETUP.md#
 - **Stock CV** uses **lualatex** — pdflatex fails on modern MiKTeX with fontawesome5 font-expansion errors. lualatex handles the same sources cleanly.
 - **Stock cover letter** uses **xelatex** — cover.cls requires fontspec.
 - **Custom template active:** run its declared `<CV_COMPILE>`/`<COVER_COMPILE>` command instead, substituting the actual filename for `<file>`. Never fall back to lualatex/xelatex when a custom template's compile command is a different toolchain (e.g. `typst compile`) — that command is what the manifest actually verified in `/add-template` Step 4.
+  Run each custom compile inside a scoped directory change that ends back at the repository root before Step 5e: on macOS a subshell that changes into `cv/` or `cover_letters/`, in PowerShell `Push-Location <folder> -ErrorAction Stop; try { <COMPILE> } finally { Pop-Location }`.
 
 If either compile fails, fix the error and re-compile until clean.
 
@@ -363,6 +372,8 @@ Failures here are template-level problems: fix them in the `<CV_EXT>` source (e.
 ### 5e. Clean up build artifacts
 
 After the final clean compile (and after 5b-5d have passed), delete the intermediate files the compile command left behind. Keep the source (`<CV_EXT>`/`<COVER_EXT>`), the `.pdf`, and every template asset (`cover.cls`, `OpenFonts/`, a custom template's files).
+
+Run the following cleanup commands from the repository root.
 
 - **Stock or custom LaTeX toolchain:**
   ```bash

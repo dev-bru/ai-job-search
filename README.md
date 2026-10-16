@@ -41,25 +41,44 @@ Sixty-nine tailored applications, twenty first interviews, and one signed contra
 
 ## What this fork adds
 
-- Codex entry points for the core flows use the same slash commands as Claude Code and point to the canonical workflow specs.
+- Codex entry points for all twelve workflows use Codex skills and point to the canonical workflow specs.
 - Runtime-neutral guidance covers Claude-only steps; PowerShell and macOS shell forms are documented and guarded by a test.
-- Repo-root-relative skill paths share one job state, and recorded profile rules take precedence over one-off requests.
+- Repo-root-relative skill paths share one job state, and stricter one-off requests are honored.
 - `SETUP.md` includes the MiKTeX sandbox recipe; `/add-portal` stages new portal skills under `build/portal-staging/` for installation outside the sandbox.
 - Tested on Windows: every command ran under both Codex CLI and Claude Code with matching results.
 
 ### Quick start with Codex
 
 1. Install and sign in to the OpenAI Codex CLI. Clone this fork with `git clone https://github.com/dev-bru/ai-job-search.git` and enter the `ai-job-search` folder.
-2. Install the portal CLIs as in [Quick start step 2](#2-install-job-search-tools).
+2. Install the portal CLIs as in [Quick start step 2](#2-install-job-search-tools), in your own terminal before starting Codex (inside the Codex sandbox `bun install` cannot write its temp folder).
 3. Start Codex in the repo folder with network access (needed by `/scrape` and `/apply`):
 
    ```bash
    codex --sandbox workspace-write -c sandbox_workspace_write.network_access=true
    ```
 
-   The same commands work: `/setup`, `/scrape`, `/rank`, `/apply <url>`, `/upskill`, `/interview`, `/outcome`, `/expand`, `/html-report`, `/reset`, `/add-template`, and `/add-portal`.
+   Use these Codex skills for the Claude Code commands:
+
+   | Claude Code | Codex |
+   |---|---|
+   | `/setup` | `$job-setup` |
+   | `/scrape` | `$job-scrape` |
+   | `/rank` | `$job-rank` |
+   | `/apply` | `$job-apply` |
+   | `/upskill` | `$job-upskill` |
+   | `/interview` | `$job-interview` |
+   | `/outcome` | `$job-outcome` |
+   | `/expand` | `$job-expand` |
+   | `/html-report` | `$job-html-report` |
+   | `/reset` | `$job-reset` |
+   | `/add-template` | `$job-add-template` |
+   | `/add-portal` | `$job-add-portal` |
+
+   Pick a skill from `/skills`, or ask in plain words. In `codex exec`, prompt text such as `/setup` also works.
 
 `/gmail-sync` and `/notion-sync` require Claude's connectors and stop under Codex. Under Codex, `/add-portal` stages the new portal in `build/portal-staging/` and gives a one-line install command. For LaTeX, see [Compiling inside the Codex sandbox](SETUP.md#compiling-inside-the-codex-sandbox). macOS has not yet been tested.
+
+**Security notes:** `/add-portal` generates and live-tests code from a web page; review the staged files before installing them. The LaTeX sandbox recipe is for sandboxed runs only.
 
 ## What this is
 

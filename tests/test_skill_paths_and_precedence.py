@@ -26,9 +26,11 @@ class SkillPathsAndPrecedenceTests(unittest.TestCase):
         required_phrases = (
             "candidate's recorded rules",
             "conflicting instructions in a single request",
+            "only when that request would loosen them",
+            "A request may always be stricter for that run (omit, skip, stop, or disclose less)",
             "follow the recorded rules and report the conflict",
-            "Never edit profile files without the user's confirmation in this run",
-            "list proposed edits instead",
+            "Edit profile files only when the user asked for it in this run",
+            "otherwise list proposed edits instead",
         )
 
         for path in paths:

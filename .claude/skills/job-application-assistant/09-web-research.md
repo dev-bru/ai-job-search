@@ -1,5 +1,5 @@
 ---
-framework_version: 1.1.3
+framework_version: 1.1.4
 ---
 
 # Web Research and Fetching
@@ -33,6 +33,8 @@ Do **not** respond to a 403 by softening the cover letter to vague generalities,
 - **A site that has actually declined.** If `robots.txt` disallows the path for `*` or for `Claude-User`, retrying with browser headers circumvents the exact mechanism the site was told to use. **Do not retry.** Skip to escalation step 4 and find the employer's own posting instead.
 
 Check it first. It is one cheap fetch, and the repo ships the check. Use `python3` on macOS and `py` on Windows (`python` if that is how your Python installation is exposed), as in `SETUP.md`.
+
+**Quoting `<URL>`:** every command below puts the URL inside single quotes. Before substituting it, replace each apostrophe (`'`) in the URL with `%27`; a URL never needs a literal apostrophe, and one would end the quoted string and let the rest of the URL run as a command.
 
 macOS shell:
 

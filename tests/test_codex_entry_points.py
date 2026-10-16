@@ -1,4 +1,4 @@
-"""Guards for Codex's thin entry points to the six core flows."""
+"""Guards for Codex's thin entry points to all twelve workflows."""
 
 import re
 import unittest
@@ -13,11 +13,17 @@ CANONICAL = {
     "apply": ".claude/commands/apply.md",
     "upskill": ".claude/skills/upskill/SKILL.md",
     "interview": ".claude/commands/interview.md",
+    "outcome": ".claude/commands/outcome.md",
+    "expand": ".claude/commands/expand.md",
+    "html-report": ".claude/commands/html-report.md",
+    "reset": ".claude/commands/reset.md",
+    "add-template": ".claude/commands/add-template.md",
+    "add-portal": ".claude/commands/add-portal.md",
 }
 
 
 class CodexEntryPointTests(unittest.TestCase):
-    def test_exactly_one_entry_point_per_core_flow(self):
+    def test_exactly_one_entry_point_per_workflow(self):
         names = {path.parent.name for path in SKILLS.glob("job-*/SKILL.md")}
         self.assertEqual(names, {f"job-{flow}" for flow in CANONICAL})
 
@@ -48,6 +54,14 @@ class CodexEntryPointTests(unittest.TestCase):
         for flow in CANONICAL:
             with self.subTest(flow=flow):
                 self.assertIn(f".agents/skills/job-{flow}/SKILL.md", agents)
+
+    def test_readme_lists_codex_invocations(self):
+        readme = (REPO / "README.md").read_text(encoding="utf-8")
+        for flow in CANONICAL:
+            with self.subTest(flow=flow):
+                self.assertIn(f"| `/{flow}` | `$job-{flow}` |", readme)
+        self.assertIn("`/skills`", readme)
+        self.assertIn("`codex exec`", readme)
 
 
 class RuntimeNeutralCommandTests(unittest.TestCase):

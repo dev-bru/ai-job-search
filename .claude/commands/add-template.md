@@ -88,8 +88,9 @@ Collect:
      ```powershell
      if (Test-Path '<file>.pdf') { Remove-Item '<file>.pdf' -ErrorAction Stop }
      New-Item -ItemType Directory -Path build -Force -ErrorAction Stop | Out-Null
+     if (Test-Path 'build/<file>.pdf') { Remove-Item 'build/<file>.pdf' -ErrorAction Stop }
      lualatex -interaction=nonstopmode -output-directory=build '<file>.tex'
-     if ($LASTEXITCODE -ne 0) { throw 'LaTeX compile failed' }
+     if (-not $? -or $LASTEXITCODE -ne 0) { throw 'LaTeX compile failed' }
      Move-Item 'build/<file>.pdf' . -Force -ErrorAction Stop
      ```
    - **`.typ` source**: default to `typst compile <file>.typ <file>.pdf` - Typst has a single binary, no engine choice.

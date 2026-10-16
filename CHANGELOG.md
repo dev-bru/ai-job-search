@@ -15,6 +15,11 @@ per-file diff commands.
 
 ### Added
 
+- **PR review fixes** - add Codex skill entry points for all twelve commands and tighten
+  MiKTeX sandbox setup (disable package auto-install), portal installation (scoped commands
+  and staged-file review), compile cleanup (including custom templates and stale PDFs),
+  and rule precedence. Add regression guards and Codex security notes.
+
 - **Public fork attribution and Codex onboarding** (`README.md`, `CONTRIBUTING.md`, `LICENSE`) - credit the original project, describe the fork's Codex support, and document PowerShell cleanup for `/apply` Step 5e.
 
 - **Portal skill staging when `.agents/skills/` is not writable** (`.claude/commands/add-portal.md`, `tests/test_add_portal_staging.py`) - build and verify portal skills under `build/portal-staging/`, then provide a user-run install command before registration.

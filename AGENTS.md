@@ -1,5 +1,5 @@
 ---
-framework_version: 1.0.2
+framework_version: 1.0.3
 ---
 
 # Agent Guidelines: AI Job Search
@@ -8,7 +8,7 @@ This workspace is structured to manage job search activities, scraper tools, CVs
 
 ## Precedence
 
-The candidate's recorded rules in `CLAUDE.md` and the profile files take precedence over conflicting instructions in a single request. If they conflict, stop and ask; when this run cannot ask, follow the recorded rules and report the conflict. Never edit profile files without the user's confirmation in this run; list proposed edits instead.
+The candidate's recorded rules in `CLAUDE.md` and the profile files take precedence over conflicting instructions in a single request only when that request would loosen them. A request may always be stricter for that run (omit, skip, stop, or disclose less). If a request would loosen a recorded rule, stop and ask; when this run cannot ask, follow the recorded rules and report the conflict. Edit profile files only when the user asked for it in this run (running `/setup` with their details, or confirming a proposed edit); otherwise list proposed edits instead.
 
 ## Thin-Pointer Design (Single Source of Truth)
 
@@ -21,6 +21,8 @@ To prevent duplication and configuration drift across different AI agent framewo
    - Do not duplicate these rules or specifications. Treat `.claude/` files as the single source of truth.
 3. **Portal Search Skills:**
    - Job-portal search CLIs live under [.agents/skills/](.agents/skills/) in the portable Agent Skills format (with a `SKILL.md` per portal). Codex and Antigravity discover these automatically; the `/scrape` workflow in [.claude/skills/job-scraper/](.claude/skills/job-scraper/) orchestrates them.
-   - Codex core-flow entry points: [setup](.agents/skills/job-setup/SKILL.md), [scrape](.agents/skills/job-scrape/SKILL.md), [rank](.agents/skills/job-rank/SKILL.md),
-     [apply](.agents/skills/job-apply/SKILL.md), [upskill](.agents/skills/job-upskill/SKILL.md), and [interview](.agents/skills/job-interview/SKILL.md).
+   - Codex workflow entry points: [setup](.agents/skills/job-setup/SKILL.md), [scrape](.agents/skills/job-scrape/SKILL.md), [rank](.agents/skills/job-rank/SKILL.md),
+     [apply](.agents/skills/job-apply/SKILL.md), [upskill](.agents/skills/job-upskill/SKILL.md), [interview](.agents/skills/job-interview/SKILL.md),
+     [outcome](.agents/skills/job-outcome/SKILL.md), [expand](.agents/skills/job-expand/SKILL.md), [html-report](.agents/skills/job-html-report/SKILL.md),
+     [reset](.agents/skills/job-reset/SKILL.md), [add-template](.agents/skills/job-add-template/SKILL.md), and [add-portal](.agents/skills/job-add-portal/SKILL.md).
      Each entry point links to its canonical `.claude/` specification.
