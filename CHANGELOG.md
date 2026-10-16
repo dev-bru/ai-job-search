@@ -53,6 +53,11 @@ per-file diff commands.
 
 ### Fixed
 
+- **Workflow shell steps run on Windows PowerShell and macOS** (`/add-template`,
+  web research, `/apply`, `/rank`, `/add-portal`, `/reset`, and the CV and cover-letter
+  guides) - platform-specific commands cover template compilation, portal setup,
+  document cleanup, and scratchpad fetches; Python invocations follow `SETUP.md`.
+  A regression test guards shell-only syntax in the canonical workflow specs.
 - **`jobnet-search` routes external ads to employer `jobAdUrl` rather than broken `find-job` links**
   (#538, `.agents/skills/jobnet-search/cli/src/commands/search.ts`, `.agents/skills/jobnet-search/cli/README.md`,
   `.agents/skills/jobnet-search/cli/tests/search-normalization.test.ts`) - external job postings on

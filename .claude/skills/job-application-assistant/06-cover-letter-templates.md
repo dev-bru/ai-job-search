@@ -1,5 +1,5 @@
 ---
-framework_version: 1.0.2
+framework_version: 1.0.3
 ---
 
 # Cover Letter Templates and Tailoring Guide
@@ -14,8 +14,17 @@ Cover letters use a custom LaTeX document class (`cover.cls`) with Lato/Raleway 
 
 ### Compile command
 
+macOS shell:
+
 ```bash
 cd cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+```
+
+Windows PowerShell:
+
+```powershell
+Set-Location cover_letters -ErrorAction Stop
+xelatex -interaction=nonstopmode cover_<company>_<role>.tex
 ```
 
 Expected output: `Output written on cover_<company>_<role>.pdf (1 page, ...)`. Any page count other than 1 is a failure that must be fixed before presenting to the user.

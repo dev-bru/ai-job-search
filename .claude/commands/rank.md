@@ -6,6 +6,8 @@ You are batch-scoring the jobs that `/scrape` has collected, so the user can dec
 
 Follow these steps **in order**.
 
+Commands use `python3`. If `python3` is not on your PATH, use `python` or `py` (Windows), as described in `SETUP.md`.
+
 ---
 
 ## Step 0: Parse Input

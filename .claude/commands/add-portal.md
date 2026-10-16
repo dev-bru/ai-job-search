@@ -99,8 +99,16 @@ These conventions are what make portal skills interchangeable for `/scrape` and 
 Never register a portal skill that has not returned real results. Markup assumptions from Step 2 routinely miss quirks that only show up live.
 
 1. Install dev types and typecheck:
+   macOS shell:
    ```bash
    cd .agents/skills/<name>/cli && bun install && bun run typecheck
+   ```
+   Windows PowerShell:
+   ```powershell
+   Set-Location .agents/skills/<name>/cli -ErrorAction Stop
+   bun install
+   if ($LASTEXITCODE -ne 0) { throw 'bun install failed' }
+   bun run typecheck
    ```
 2. Run the live search with the user's test query:
    ```bash
@@ -125,8 +133,16 @@ Do not proceed to Step 5 until search, detail, and tests all pass.
    - The portal CLI itself is already picked up automatically by `/scrape` (it discovers `.agents/skills/*/SKILL.md`) — no further wiring is needed for CLI search/detail.
    - Optionally add WebSearch/`site:` placeholder queries for that board in `.claude/skills/job-scraper/search-queries.md` (use the `[YOUR_JOB_BOARD]` style placeholders already there) so the fallback path still covers the board if the CLI is unavailable.
 2. Remind the user to add the install line for their own records if they maintain a fork README:
+   macOS shell:
    ```bash
    cd .agents/skills/<name>/cli && bun install && cd ../../../..
+   ```
+   Windows PowerShell:
+   ```powershell
+   Push-Location .agents/skills/<name>/cli -ErrorAction Stop
+   bun install
+   Pop-Location
+   if ($LASTEXITCODE -ne 0) { throw 'bun install failed' }
    ```
    (Skip if the skill is zero-dependency and they don't care about typecheck types.)
 3. Note that the skill auto-triggers from its `SKILL.md` description - no other wiring is needed.

@@ -44,6 +44,8 @@ Read the evaluation framework:
 
 Using the framework from `04-job-evaluation.md`, evaluate the job posting against the candidate's profile. If the salary lookup tool is configured, run:
 
+Commands use `python`. If `python` is not on your PATH, use `python3` (macOS) or `py` (Windows), as described in `SETUP.md`.
+
 ```bash
 python salary_lookup.py "<Company Name>" --json
 ```
@@ -240,9 +242,22 @@ After all edits are applied, the two files on disk are the final drafts.
 
 Use `<CV_COMPILE>` and `<COVER_COMPILE>` resolved in Step 2 (the active template's declared compile command, or the stock defaults below if no custom template is active):
 
+macOS shell:
+
 ```bash
 cd cv && lualatex -interaction=nonstopmode main_<company>_<role>.tex
 cd ../cover_letters && xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+```
+
+Windows PowerShell:
+
+```powershell
+Set-Location cv -ErrorAction Stop
+lualatex -interaction=nonstopmode main_<company>_<role>.tex
+if ($LASTEXITCODE -ne 0) { throw 'CV compile failed' }
+Set-Location ../cover_letters -ErrorAction Stop
+xelatex -interaction=nonstopmode cover_<company>_<role>.tex
+if ($LASTEXITCODE -ne 0) { throw 'Cover letter compile failed' }
 ```
 
 - **Stock CV** uses **lualatex** — pdflatex fails on modern MiKTeX with fontawesome5 font-expansion errors. lualatex handles the same sources cleanly.
@@ -314,7 +329,7 @@ python tools/verify_pdf.py cv/main_<company>_<role>.pdf --ascii-dates --dump-tex
 The command prints `extractor: pypdf` or `extractor: pdftotext`. Record that name in the Step 6 report. Read the `.txt` file. If that tool is unavailable, the Poppler fallback is:
 
 ```bash
-cd cv && pdftotext -layout -enc UTF-8 main_<company>_<role>.pdf main_<company>_<role>.txt
+pdftotext -layout -enc UTF-8 cv/main_<company>_<role>.pdf cv/main_<company>_<role>.txt
 ```
 
 **2. Parseability checks** on the extracted text:
