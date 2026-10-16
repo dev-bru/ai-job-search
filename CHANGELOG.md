@@ -17,7 +17,7 @@ per-file diff commands.
 
 - **Portal skill staging when `.agents/skills/` is not writable** (`.claude/commands/add-portal.md`, `tests/test_add_portal_staging.py`) - build and verify portal skills under `build/portal-staging/`, then provide a user-run install command before registration.
 
-- **LaTeX compilation inside the Codex sandbox** (`SETUP.md`, `/apply`, `/add-template`) - document workspace-local MiKTeX writes and link to the sandbox setup note from both compile workflows.
+- **LaTeX compilation inside the Codex sandbox** (`SETUP.md`, `/apply`, `/add-template`) - document a working workspace-local MiKTeX setup, including the first-run config marker and optional OpenType font copies, and link to the sandbox setup note from both compile workflows.
 
 - **Root-relative skill paths and profile-rule precedence** (`AGENTS.md`, the scraper,
   application-assistant, and upskill skills) - all skill paths resolve from the repository

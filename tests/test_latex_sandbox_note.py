@@ -10,7 +10,7 @@ class LatexSandboxNoteTests(unittest.TestCase):
     def test_setup_documents_workspace_local_tex_writes(self):
         setup = (REPO / "SETUP.md").read_text(encoding="utf-8")
         self.assertIn("### Compiling inside the Codex sandbox", setup)
-        for variable in ("MIKTEX_USERCONFIG", "MIKTEX_USERDATA", "TEXMFVAR"):
+        for variable in ("MIKTEX_USERINSTALL", "MIKTEX_USERCONFIG", "MIKTEX_USERDATA", "LastUserMaintenance", "TEXMFVAR"):
             with self.subTest(variable=variable):
                 self.assertIn(variable, setup)
 

@@ -143,18 +143,29 @@ Push-Location $SmokeDir; xelatex -interaction=nonstopmode -halt-on-error cover_s
 
 ### Compiling inside the Codex sandbox
 
-MiKTeX writes per-user configuration and data under `%APPDATA%` and `%LOCALAPPDATA%`. A sandbox that blocks writes outside the repository can make `lualatex` or `xelatex` fail with "Access is denied". This is only needed in a sandbox that blocks writes outside the repository; Claude Code needs nothing.
+MiKTeX normally writes per-user files outside the repository and may also write to the Windows registry. A sandbox can block both, causing `lualatex` or `xelatex` to fail with "Access is denied". An empty config folder also looks like an unfinished MiKTeX install, so the sandbox may try to run first-time setup and write to the registry.
 
-From any folder in the repository (`cv/`, `cover_letters/`, or a template folder), set these before compiling:
+From any folder in the repository, set up workspace-local MiKTeX paths before compiling:
 
 ```powershell
-$RepoRoot = git rev-parse --show-toplevel
-$env:MIKTEX_USERCONFIG = Join-Path $RepoRoot 'build\miktex\config'
-$env:MIKTEX_USERDATA = Join-Path $RepoRoot 'build\miktex\data'
-New-Item -ItemType Directory -Force -Path $env:MIKTEX_USERCONFIG, $env:MIKTEX_USERDATA | Out-Null
+$repo = (git rev-parse --show-toplevel).Trim()
+$install = (Get-Item (Join-Path (Split-Path (Get-Command lualatex).Source) '../../..')).FullName.Replace('\','/')
+$env:MIKTEX_USERINSTALL = $install
+$env:MIKTEX_USERCONFIG = "$repo/build/miktex"
+$env:MIKTEX_USERDATA = $env:MIKTEX_USERCONFIG
+New-Item -ItemType Directory -Force "$repo/build/miktex/miktex/config" | Out-Null
+Set-Content "$repo/build/miktex/miktex/config/miktex.ini" "[Core]`nLastUserMaintenance=1" -Encoding ASCII
 ```
 
-The measured run also set `MIKTEX_USERINSTALL` to the existing per-user MiKTeX install; that is optional and only needed if MiKTeX requires an explicit install path.
+For a template that loads an installed OpenType font by name (for example, Latin Modern through `fontspec`), copy the font files into the workspace too. This example copies the Latin Modern Roman and Sans fonts:
+
+```powershell
+New-Item -ItemType Directory -Force "$repo/build/miktex/fonts/opentype" | Out-Null
+Copy-Item "$install/fonts/opentype/public/lm/lmroman10-*.otf" "$repo/build/miktex/fonts/opentype/"
+Copy-Item "$install/fonts/opentype/public/lm/lmsans10-*.otf" "$repo/build/miktex/fonts/opentype/"
+```
+
+MiKTeX may still print update or maintenance warnings; they are harmless. Claude Code needs nothing.
 
 **macOS / TeX Live (UNVERIFIED):** from any folder in the repository, use a workspace-local variable directory:
 
