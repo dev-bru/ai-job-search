@@ -141,6 +141,28 @@ Copy-Item cover_letters\cover.cls, cover_letters\OpenFonts -Destination $SmokeDi
 Push-Location $SmokeDir; xelatex -interaction=nonstopmode -halt-on-error cover_smoke.tex; Pop-Location
 ```
 
+### Compiling inside the Codex sandbox
+
+MiKTeX writes per-user configuration and data under `%APPDATA%` and `%LOCALAPPDATA%`. A sandbox that blocks writes outside the repository can make `lualatex` or `xelatex` fail with "Access is denied". This is only needed in a sandbox that blocks writes outside the repository; Claude Code needs nothing.
+
+From any folder in the repository (`cv/`, `cover_letters/`, or a template folder), set these before compiling:
+
+```powershell
+$RepoRoot = git rev-parse --show-toplevel
+$env:MIKTEX_USERCONFIG = Join-Path $RepoRoot 'build\miktex\config'
+$env:MIKTEX_USERDATA = Join-Path $RepoRoot 'build\miktex\data'
+New-Item -ItemType Directory -Force -Path $env:MIKTEX_USERCONFIG, $env:MIKTEX_USERDATA | Out-Null
+```
+
+The measured run also set `MIKTEX_USERINSTALL` to the existing per-user MiKTeX install; that is optional and only needed if MiKTeX requires an explicit install path.
+
+**macOS / TeX Live (UNVERIFIED):** from any folder in the repository, use a workspace-local variable directory:
+
+```bash
+export TEXMFVAR="$(git rev-parse --show-toplevel)/build/texmf-var"
+mkdir -p "$TEXMFVAR"
+```
+
 ### Optional: ATS text extraction (pypdf, then pdftotext)
 
 `/apply` runs an ATS parseability check on the compiled CV: it extracts the PDF's text layer and verifies contact details, reading order, and keyword coverage the way an applicant-tracking system sees them.

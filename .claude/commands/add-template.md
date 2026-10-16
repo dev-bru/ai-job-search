@@ -147,6 +147,8 @@ Write into it:
 
 ## Step 4: Verify the Template Compiles (MANDATORY)
 
+For sandboxed runtimes compiling LaTeX, see [Compiling inside the Codex sandbox](../../SETUP.md#compiling-inside-the-codex-sandbox).
+
 Never register a template without a successful test compile. Templates that "look fine" routinely fail on missing fonts, missing classes/packages, or a wrong compile command.
 
 1. Copy `template<source-extension>` to a scratch file in the same folder (e.g. `_compile_test.tex` or `_compile_test.typ`) and fill every `[PLACEHOLDER]` with realistic dummy data (name, contact line, one education entry, one job entry with 3 bullets — enough content to exercise the layout).

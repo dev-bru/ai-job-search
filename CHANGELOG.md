@@ -15,6 +15,8 @@ per-file diff commands.
 
 ### Added
 
+- **LaTeX compilation inside the Codex sandbox** (`SETUP.md`, `/apply`, `/add-template`) - document workspace-local MiKTeX writes and link to the sandbox setup note from both compile workflows.
+
 - **Root-relative skill paths and profile-rule precedence** (`AGENTS.md`, the scraper,
   application-assistant, and upskill skills) - all skill paths resolve from the repository
   root, and candidate-recorded rules take precedence over conflicting one-off requests.

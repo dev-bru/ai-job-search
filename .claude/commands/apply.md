@@ -260,6 +260,8 @@ xelatex -interaction=nonstopmode cover_<company>_<role>.tex
 if ($LASTEXITCODE -ne 0) { throw 'Cover letter compile failed' }
 ```
 
+For sandboxed runtimes, see [Compiling inside the Codex sandbox](../../SETUP.md#compiling-inside-the-codex-sandbox).
+
 - **Stock CV** uses **lualatex** — pdflatex fails on modern MiKTeX with fontawesome5 font-expansion errors. lualatex handles the same sources cleanly.
 - **Stock cover letter** uses **xelatex** — cover.cls requires fontspec.
 - **Custom template active:** run its declared `<CV_COMPILE>`/`<COVER_COMPILE>` command instead, substituting the actual filename for `<file>`. Never fall back to lualatex/xelatex when a custom template's compile command is a different toolchain (e.g. `typst compile`) — that command is what the manifest actually verified in `/add-template` Step 4.
